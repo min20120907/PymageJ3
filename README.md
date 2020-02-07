@@ -1,5 +1,6 @@
 # PymageJ
 Python tools for ImageJ. 
+But for Python3!!!
 Features: read/write ImageJ ROIs.
 
 ## How to use
