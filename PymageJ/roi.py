@@ -1,16 +1,3 @@
-"""
-PymageJ Copyright (C) 2015 Jochem Smit
-
-This program is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License
- as published by the Free Software Foundation; either version 2 of the License, or (at your option) any later version.
-
-This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty
- of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
-
-You should have received a copy of the GNU General Public License along with this program; if not, write to the
-Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
-"""
-
 import numpy as np
 import struct
 import re
@@ -223,15 +210,15 @@ class ROIEncoder(ROIFileObject):
 
     def write(self):
 
-        self._write_var('MAGIC', 'Iout')
+        self._write_var('MAGIC', 'Iout'.encode())
         self._write_var('VERSION_OFFSET', 225)  # todo or 226??
 
-        roi_writer = getattr(self, '_write_roi_' + self.roi_obj.type)
+        roi_writer = getattr(self, str('_write_roi_' + self.roi_obj.type))
         roi_writer()
 
     def __enter__(self):
         self.f_obj = open(self.path, 'wb')
-        pad = struct.pack('128b', *np.zeros(128))
+        pad = struct.pack('128b', *np.zeros((128,), dtype=np.int))
         self.f_obj.write(pad)
         return self
 
@@ -301,7 +288,7 @@ class ROIEncoder(ROIFileObject):
 
         self._write_var('NAME_LENGTH', len(self.name))
         self.f_obj.seek(self.name_offset)
-        self.f_obj.write(self.name)
+        self.f_obj.write(self.name.encode())
 
 
 class ROIDecoder(ROIFileObject):
@@ -327,8 +314,8 @@ class ROIDecoder(ROIFileObject):
             self._set_header(h)
 
         for key in self.header:
-            print key
-            print self.header[key]
+            print(key)
+            print(self.header[key])
 
     def read_header(self):
         if self._get_var('MAGIC') != 'Iout':
